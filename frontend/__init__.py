@@ -1,0 +1,1 @@
+"""QueryMind AI Streamlit frontend."""

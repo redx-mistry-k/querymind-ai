@@ -1,0 +1,1 @@
+"""QueryMind AI backend package."""
