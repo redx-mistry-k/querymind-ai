@@ -9,6 +9,7 @@ import streamlit as st
 from frontend.components.api import APIError, delete, get, post, set_session_id
 from frontend.components.charts import build_figure
 from frontend.components.exports import rows_to_csv, rows_to_xlsx
+from frontend.components.state import reset_analysis_state
 from frontend.styles.theme import THEME_CSS
 
 st.set_page_config(
@@ -81,6 +82,10 @@ def load_followup(question: str) -> None:
     st.session_state.validation = None
     st.session_state.result = None
     st.session_state.pop("insight", None)
+
+
+def reset_analysis() -> None:
+    reset_analysis_state(st.session_state)
 
 
 def safe_call(callable_, *args: Any, **kwargs: Any) -> Any:
@@ -386,12 +391,7 @@ def ask_page() -> None:
                 ):
                     execute_validated(question)
                 st.rerun()
-    if action_cols[1].button("New analysis", width="stretch"):
-        for key in ("generation", "validation", "result", "insight", "execution_error"):
-            st.session_state[key] = None
-        st.session_state.question = ""
-        st.session_state.conversation = []
-        st.rerun()
+    action_cols[1].button("New analysis", on_click=reset_analysis, width="stretch")
     generation = st.session_state.generation
     if generation:
         if generation.get("clarification_needed"):

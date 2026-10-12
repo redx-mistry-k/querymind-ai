@@ -53,6 +53,17 @@ def main() -> None:
     if not app.dataframe:
         raise AssertionError("Example execution did not render a results table")
     print("Ask Your Data demo validation/execution: ok")
+    next(button for button in app.button if button.label == "New analysis").click()
+    app.run()
+    assert_healthy(app, "Ask Your Data new-analysis reset")
+    if app.session_state["question"] or app.text_area[0].value:
+        raise AssertionError("New analysis did not clear the question widget")
+    if app.session_state["conversation"]:
+        raise AssertionError("New analysis did not clear conversation context")
+    for key in ("generation", "validation", "result", "insight", "execution_error"):
+        if app.session_state[key] is not None:
+            raise AssertionError(f"New analysis did not clear {key}")
+    print("Ask Your Data new-analysis callback reset: ok")
     app.radio[0].set_value("AI Settings")
     app.run()
     provider_select = next(item for item in app.selectbox if item.label == "Provider")
